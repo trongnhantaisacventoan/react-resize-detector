@@ -125,9 +125,13 @@ function useResizeDetector<T extends HTMLElement = any>({
   useEffect(() => {
     let resizeObserver: ResizeObserver | undefined;
     if (refElement) {
-      const w = refElement.ownerDocument?.defaultView ?? window;
-      resizeObserver = new w.ResizeObserver(resizeHandler);
-      resizeObserver.observe(refElement, observerOptions);
+      if (
+        refElement.ownerDocument?.defaultView &&
+        refElement instanceof refElement.ownerDocument.defaultView.HTMLElement
+      ) {
+        resizeObserver = new refElement.ownerDocument.defaultView.ResizeObserver(resizeHandler);
+        resizeObserver.observe(refElement, observerOptions);
+      }
     } else {
       if (size.width || size.height) {
         setSize({ width: undefined, height: undefined });
